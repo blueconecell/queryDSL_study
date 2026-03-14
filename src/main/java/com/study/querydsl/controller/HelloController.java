@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class HelloController {
 
-     EntityManager em;
+     private final EntityManager em;
 
     @GetMapping("/hello")
     public String Hello() {
