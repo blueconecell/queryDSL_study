@@ -1,24 +1,33 @@
-package com.study.querydsl.entity;
+package com.study.querydsl;
 
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.study.querydsl.entity.Member;
+import com.study.querydsl.entity.Team;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
 
+import static com.study.querydsl.entity.QMember.member;
 
 @SpringBootTest
-@Transactional( )
-class MemberTest {
+@Transactional
+public class QuerydslBasicTest {
 
 
     @Autowired
     EntityManager em;
 
-    @Test
-    public void testEntity() {
+    JPAQueryFactory queryFactory;
+
+    @BeforeEach
+    public void before() {
+        queryFactory = new JPAQueryFactory(em);
         Team teamA = new Team("teamA");
         Team teamB = new Team("teamB");
         em.persist(teamA);
@@ -44,5 +53,16 @@ class MemberTest {
             System.out.println("member = " + member);
             System.out.println("-> member.team : "+member.getTeam());
         }
+    }
+
+
+    @Test
+    public void Qtype(){
+        Member findMember = queryFactory
+                .select(member)
+                .from(member)
+                .where(member.username.eq("member1"))
+                .fetchOne();
+        Assertions.assertEquals(findMember.getUsername(), "member1");
     }
 }
